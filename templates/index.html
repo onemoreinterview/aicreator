@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Recorder</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        #recordButton {
+            background-color: red;
+            color: white;
+            font-size: 24px;
+            padding: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #audioPlayer {
+            margin-top: 20px;
+            display: none;
+        }
+        #deviceSelect {
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recordButton = document.getElementById('recordButton');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const deviceSelect = document.getElementById('deviceSelect');
+            let recording = false;
+
+            fetch('/get_input_devices')
+                .then(response => response.json())
+                .then(devices => {
+                    devices.forEach(device => {
+                        const option = document.createElement('option');
+                        option.value = device.index;
+                        option.textContent = device.name;
+                        deviceSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+
+            deviceSelect.addEventListener('change', () => {
+                const selectedDevice = deviceSelect.value;
+                fetch(`/set_device/${selectedDevice}`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "device_set") {
+                            console.log(`Device set to index: ${data.device_index}`);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            recordButton.addEventListener('click', () => {
+                if (!recording) {
+                    fetch('/start_record', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "recording_started") {
+                                recordButton.textContent = 'Recording... Press Space to Stop';
+                                recording = true;
+                                audioPlayer.style.display = 'none';
+                                audioPlayer.src = ''; // Clear the previous audio source
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    fetch('/stop_record', { method: 'POST' })
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const url = window.URL.createObjectURL(blob);
+                            audioPlayer.src = url;
+                            audioPlayer.style.display = 'block';
+                            audioPlayer.play();
+                            recordButton.textContent = 'Start Recording';
+                            recording = false;
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+
+            document.addEventListener('keyup', (event) => {
+                if (event.code === 'Space' && recording) {
+                    recordButton.textContent = 'Thinking...';
+                    recordButton.click();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <select id="deviceSelect">
+            <option value="" disabled selected>Select Input Device</option>
+        </select>
+        <button id="recordButton">Start Recording</button>
+        <audio id="audioPlayer" controls></audio>
+    </div>
+</body>
+</html>
+
