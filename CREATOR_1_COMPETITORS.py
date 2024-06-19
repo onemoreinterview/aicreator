@@ -29,8 +29,7 @@ def open_file(filepath):
         return infile.read()
 
 
-client = OpenAI(api_key=api_key, http_client=httpx.Client(proxies={
-                                          'https://': 'http://cC1bDD:CaM91W@94.131.53.51:9688'}))
+client = OpenAI(api_key=api_key)
 
 conversation1 = []
 chatbot1 = open_file('chatbot1.txt')
