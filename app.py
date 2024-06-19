@@ -111,5 +111,5 @@ def handle_stop_record():
     return Response(processed_audio_io, mimetype="audio/wav")
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)

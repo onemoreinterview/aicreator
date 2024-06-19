@@ -7,11 +7,11 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            flex-direction: column;
         }
         #recordButton {
             background-color: red;
@@ -22,20 +22,61 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        #recordButton.thinking {
+            background-color: green;
+        }
         #audioPlayer {
-            margin-top: 20px;
             display: none;
         }
         #deviceSelect {
+            margin-bottom: 20px;
+        }
+        .equalizer {
+            display: none;
             margin-top: 20px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+        }
+        .equalizer div {
+            width: 5px;
+            height: 100%;
+            background: #00f;
+            animation: bounce 1s infinite;
+        }
+        .equalizer div:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .equalizer div:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        .equalizer div:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        .equalizer div:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: scaleY(1);
+            }
+            50% {
+                transform: scaleY(0.3);
+            }
         }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const recordButton = document.getElementById('recordButton');
             const audioPlayer = document.getElementById('audioPlayer');
+            const equalizer = document.querySelector('.equalizer');
             const deviceSelect = document.getElementById('deviceSelect');
             let recording = false;
+
+            // Ensure the equalizer is hidden on load
+            equalizer.style.display = 'none';
 
             fetch('/get_input_devices')
                 .then(response => response.json())
@@ -70,7 +111,9 @@
                                 recordButton.textContent = 'Recording... Press Space to Stop';
                                 recording = true;
                                 audioPlayer.style.display = 'none';
+                                equalizer.style.display = 'none';
                                 audioPlayer.src = ''; // Clear the previous audio source
+                                recordButton.classList.remove('thinking');
                             }
                         })
                         .catch(error => console.error('Error:', error));
@@ -80,10 +123,15 @@
                         .then(blob => {
                             const url = window.URL.createObjectURL(blob);
                             audioPlayer.src = url;
-                            audioPlayer.style.display = 'block';
                             audioPlayer.play();
+                            equalizer.style.display = 'flex';
                             recordButton.textContent = 'Start Recording';
                             recording = false;
+                            recordButton.classList.remove('thinking');
+
+                            audioPlayer.onended = () => {
+                                equalizer.style.display = 'none';
+                            };
                         })
                         .catch(error => console.error('Error:', error));
                 }
@@ -92,8 +140,17 @@
             document.addEventListener('keyup', (event) => {
                 if (event.code === 'Space' && recording) {
                     recordButton.textContent = 'Thinking...';
+                    recordButton.classList.add('thinking');
                     recordButton.click();
                 }
+            });
+
+            audioPlayer.addEventListener('play', () => {
+                equalizer.style.display = 'flex';
+            });
+
+            audioPlayer.addEventListener('ended', () => {
+                equalizer.style.display = 'none';
             });
         });
     </script>
@@ -104,6 +161,13 @@
             <option value="" disabled selected>Select Input Device</option>
         </select>
         <button id="recordButton">Start Recording</button>
+        <div class="equalizer">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <audio id="audioPlayer" controls></audio>
     </div>
 </body>
