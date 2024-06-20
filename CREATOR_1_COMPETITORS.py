@@ -39,7 +39,7 @@ file_path = 'chatbot1.txt'
 def send_to_chatgpt(transcription_text):
     # Add user message from transcription
     with open(file_path, 'a') as file:  # 'a' opens the file in append mode
-        file.write(f"\nuser: {transcription_text}")  # Use the transcription text as the user's message
+        file.write(f"user: {transcription_text}")  # Use the transcription text as the user's message
 
     # Prepare the messages list
     messages = []
@@ -62,7 +62,7 @@ def send_to_chatgpt(transcription_text):
 
     # Append the response text to the file
     with open(file_path, 'a') as file:  # 'a' opens the file in append mode
-        file.write(f"\nassistant: {chat_response_text}")  # Write the role and content in the expected format
+        file.write(f"assistant: {chat_response_text}")  # Write the role and content in the expected format
 
     return chat_response_text
 
@@ -140,10 +140,10 @@ class AdvancedRecorder:
         return transcription_text
 
 
-recorder = AdvancedRecorder()
-
-press_count = 0
-max_presses = 2
+# recorder = AdvancedRecorder()
+#
+# press_count = 0
+# max_presses = 2
 
 
 # def on_press(key):
