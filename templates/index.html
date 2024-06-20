@@ -13,6 +13,7 @@
             height: 100vh;
             margin: 0;
         }
+
         #recordButton {
             background-color: red;
             color: white;
@@ -22,13 +23,19 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         #recordButton.thinking {
             background-color: green;
         }
+
         #audioPlayer {
             display: none;
-            margin-top: 20px;
         }
+
+        #deviceSelect {
+            margin-bottom: 20px;
+        }
+
         .equalizer {
             display: none;
             margin-top: 20px;
@@ -38,24 +45,30 @@
             align-items: flex-end;
             justify-content: space-between;
         }
+
         .equalizer div {
             width: 5px;
             height: 100%;
             background: #00f;
             animation: bounce 1s infinite;
         }
+
         .equalizer div:nth-child(2) {
             animation-delay: 0.1s;
         }
+
         .equalizer div:nth-child(3) {
             animation-delay: 0.2s;
         }
+
         .equalizer div:nth-child(4) {
             animation-delay: 0.3s;
         }
+
         .equalizer div:nth-child(5) {
             animation-delay: 0.4s;
         }
+
         @keyframes bounce {
             0%, 100% {
                 transform: scaleY(1);
@@ -64,9 +77,11 @@
                 transform: scaleY(0.3);
             }
         }
+
         .image-container {
             margin-bottom: 20px; /* Adjust as needed */
         }
+
         .image-container img {
             max-width: 100%; /* Ensure the image is responsive */
             height: auto; /* Maintain aspect ratio */
@@ -159,7 +174,7 @@
 </head>
 <body>
     <div class="image-container">
-        <img src="pu.jpg" alt="Pitch University">
+        <img src="pu.gif" alt="Your Image Description">
     </div>
     <div style="text-align: center; margin-top: 50px;">
         <button id="recordButton">Start Recording</button>
