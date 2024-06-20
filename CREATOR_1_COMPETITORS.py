@@ -3,7 +3,7 @@ import os
 import httpx
 import sounddevice as sd
 import soundfile as sf
-import numpy as np
+# import numpy as np
 import requests
 from colorama import Fore, Style, init
 from pydub import AudioSegment
