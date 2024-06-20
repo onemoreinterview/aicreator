@@ -7,7 +7,7 @@ import soundfile as sf
 import requests
 from colorama import Fore, Style, init
 from pydub import AudioSegment
-from pydub.playback import play
+#from pydub.playback import play
 from openai import OpenAI
 import time
 #from pynput import keyboard
