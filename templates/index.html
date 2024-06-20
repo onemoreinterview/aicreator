@@ -27,9 +27,7 @@
         }
         #audioPlayer {
             display: none;
-        }
-        #deviceSelect {
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
         .equalizer {
             display: none;
@@ -72,68 +70,65 @@
             const recordButton = document.getElementById('recordButton');
             const audioPlayer = document.getElementById('audioPlayer');
             const equalizer = document.querySelector('.equalizer');
-            const deviceSelect = document.getElementById('deviceSelect');
             let recording = false;
+            let mediaRecorder;
+            let chunks = [];
 
-            // Ensure the equalizer is hidden on load
-            equalizer.style.display = 'none';
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
 
-            fetch('/get_input_devices')
-                .then(response => response.json())
-                .then(devices => {
-                    devices.forEach(device => {
-                        const option = document.createElement('option');
-                        option.value = device.index;
-                        option.textContent = device.name;
-                        deviceSelect.appendChild(option);
-                    });
+                    mediaRecorder.ondataavailable = event => {
+                        chunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'audio/wav' });
+                        processAudio(blob);
+                        chunks = [];
+                    };
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error accessing microphone:', error);
+                    alert('Microphone access is required to use this feature. Please allow microphone access and try again.');
+                });
 
-            deviceSelect.addEventListener('change', () => {
-                const selectedDevice = deviceSelect.value;
-                fetch(`/set_device/${selectedDevice}`, { method: 'POST' })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === "device_set") {
-                            console.log(`Device set to index: ${data.device_index}`);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
+            function processAudio(blob) {
+                const formData = new FormData();
+                formData.append('audio', blob);
+
+                fetch('/process_audio', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.blob())
+                .then(processedBlob => {
+                    const url = URL.createObjectURL(processedBlob);
+                    audioPlayer.src = url;
+                    audioPlayer.play();
+                    equalizer.style.display = 'flex';
+                    recordButton.textContent = 'Ormando speaking ...';
+                    recording = false;
+
+                    audioPlayer.onended = () => {
+                        recordButton.textContent = 'Start Recording';
+                        recordButton.style.backgroundColor = 'red';
+                        equalizer.style.display = 'none';
+                    };
+                })
+                .catch(error => console.error('Error processing audio:', error));
+            }
 
             recordButton.addEventListener('click', () => {
                 if (!recording) {
-                    fetch('/start_record', { method: 'POST' })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === "recording_started") {
-                                recordButton.textContent = 'Recording... Press Space to Stop';
-                                recording = true;
-                                audioPlayer.style.display = 'none';
-                                equalizer.style.display = 'none';
-                                audioPlayer.src = ''; // Clear the previous audio source
-                                recordButton.classList.remove('thinking');
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
+                    mediaRecorder.start();
+                    recordButton.textContent = 'Recording... Press Space to Stop';
+                    recording = true;
+                    audioPlayer.style.display = 'none';
+                    equalizer.style.display = 'none';
+                    recordButton.classList.remove('thinking');
                 } else {
-                    fetch('/stop_record', { method: 'POST' })
-                        .then(response => response.blob())
-                        .then(blob => {
-                            const url = window.URL.createObjectURL(blob);
-                            audioPlayer.src = url;
-                            audioPlayer.play();
-                            equalizer.style.display = 'flex';
-                            recordButton.textContent = 'Start Recording';
-                            recording = false;
-                            recordButton.classList.remove('thinking');
-
-                            audioPlayer.onended = () => {
-                                equalizer.style.display = 'none';
-                            };
-                        })
-                        .catch(error => console.error('Error:', error));
+                    mediaRecorder.stop();
                 }
             });
 
@@ -157,9 +152,6 @@
 </head>
 <body>
     <div style="text-align: center; margin-top: 50px;">
-        <select id="deviceSelect">
-            <option value="" disabled selected>Select Input Device</option>
-        </select>
         <button id="recordButton">Start Recording</button>
         <div class="equalizer">
             <div></div>
@@ -172,4 +164,3 @@
     </div>
 </body>
 </html>
-
