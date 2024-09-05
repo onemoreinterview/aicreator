@@ -6,11 +6,9 @@ from CREATOR_1_COMPETITORS import text_to_speech, send_to_chatgpt, AdvancedRecor
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/process_audio', methods=['POST'])
 def process_audio():
@@ -38,6 +36,15 @@ def process_audio():
 
     return processed_audio_io
 
+@app.route('/clear_chat', methods=['POST'])
+def clear_chat():
+    with open('chatbot1.txt', 'r') as f:
+        first_line = f.readline()
+
+    with open('chatbot1.txt', 'w') as f:
+        f.write(first_line)
+
+    return 'Chat cleared successfully!' 
 
 # if __name__ == '__main__':
 #     app.run(debug=True)
