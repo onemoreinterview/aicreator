@@ -1,3 +1,5 @@
+
+
 body {
     display: flex;
     flex-direction: column;
@@ -5,6 +7,13 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+}
+
+#logo {
+    display: block; /* Ensures the image doesn't take up extra horizontal space */
+    margin: 0 auto; /* Centers the image horizontally */
+    width: 300px;   /* Adjust as needed for your logo size */
+    height: auto;   /* Maintains aspect ratio */
 }
 
 #recordButton {
