@@ -1,1 +1,135 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
+header {
+    text-align: center; 
+    margin-bottom: 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    margin-bottom: 10px;
+}
+
+.logo img {
+    height: 50px; 
+    width: 200px; /* Adjust as needed */
+    margin: 20px auto; /* Center the image */
+}
+
+h1 { 
+    display: none;
+}
+
+h2, h3, h4 {
+    margin-bottom: 10px;
+}
+
+.centered-text {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100px; 
+}
+
+.content {
+    display: flex;
+}
+
+.situation-info {
+    flex: 1; 
+    margin-right: 20px;
+}
+
+.difficulty-meter {
+    width: 200px; 
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: #f00; 
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; /* Center the buttons horizontally */
+}
+
+.buttons button {
+    padding: 10px 20px;
+    margin-bottom: 10px; 
+    background-color: #eee;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 24px; /* Match the font size from your code */
+}
+
+#recordButton {
+    background-color: red;
+    color: white;
+}
+
+#recordButton.thinking {
+    background-color: green;
+}
+
+#audioPlayer {
+    display: none;
+}
+
+.equalizer {
+    margin: 0 auto; 
+    width: fit-content; 
+}
+
+.equalizer div {
+    width: 5px;
+    height: 100%;
+    background: #00f;
+    animation: bounce 1s infinite;
+}
+
+.equalizer div:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.equalizer div:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.equalizer div:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.equalizer div:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0.3);
+    }
+}
+
+#clearButton {
+    background-color: blue; 
+    color: white;
+}
