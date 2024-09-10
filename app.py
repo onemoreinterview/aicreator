@@ -10,6 +10,14 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/roleplay1')
+def roleplay1():
+    return render_template('roleplay1.html')
+
+@app.route('/roleplay2')
+def roleplay2():
+    return render_template('roleplay2.html')
+
 @app.route('/process_audio', methods=['POST'])
 def process_audio():
     if 'audio' not in request.files:
