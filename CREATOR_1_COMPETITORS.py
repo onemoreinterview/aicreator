@@ -17,7 +17,7 @@ load_dotenv()
 
 api_key = os.getenv('OPENAI_API_KEY')
 #elapikey = os.getenv('ELAB_API_KEY')
-elapikey = "sk_b99fff67e28878ddb8ab2973ffdd2117121271e5bd4267c1"
+elapikey = 'sk_b99fff67e28878ddb8ab2973ffdd2117121271e5bd4267c1'
 url = os.getenv('URL')
 
 
