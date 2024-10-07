@@ -1,3 +1,4 @@
+import datetime
 import io
 
 from flask import Flask, render_template, request
@@ -46,13 +47,26 @@ def process_audio():
 
 @app.route('/clear_chat', methods=['POST'])
 def clear_chat():
+    # Get the current date and time
+    now = datetime.datetime.now()
+    # Format the date and time string for the filename
+    date_time_string = now.strftime("%Y%m%d_%H%M%S")
+
+    # Create the filename for the conversation copy
+    conversation_filename = f"conversation_{date_time_string}.txt"
+
+    # Copy the contents of chatbot1.txt to the new file
+    with open('chatbot1.txt', 'r') as f_src, open(conversation_filename, 'w') as f_dest:
+        f_dest.write(f_src.read())
+
+    # Clear the chat by writing only the first line back to chatbot1.txt
     with open('chatbot1.txt', 'r') as f:
         first_line = f.readline()
 
     with open('chatbot1.txt', 'w') as f:
         f.write(first_line)
 
-    return 'Chat cleared successfully!' 
+    return 'Chat cleared successfully!'
 
 if __name__ == '__main__':
     app.run(debug=True)
