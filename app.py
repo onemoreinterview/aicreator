@@ -1,5 +1,7 @@
 import datetime
 import io
+import os
+from datetime import datetime
 
 from flask import Flask, render_template, request
 
@@ -47,24 +49,32 @@ def process_audio():
 
 @app.route('/clear_chat', methods=['POST'])
 def clear_chat():
-    # Get the current date and time
-    now = datetime.datetime.now()
-    # Format the date and time string for the filename
-    date_time_string = now.strftime("%Y%m%d_%H%M%S")
+    # Create a timestamp for the filename
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Construct the paths
+    chatbot_path = 'chatbot1.txt'
+    conversations_dir = 'conversations'
+    conversation_path = os.path.join(conversations_dir, f'conversation_{timestamp}.txt')
 
-    # Create the filename for the conversation copy
-    conversation_filename = f"conversation_{date_time_string}.txt"
+    # Ensure the conversations directory exists
+    os.makedirs(conversations_dir, exist_ok=True)
 
-    # Copy the contents of chatbot1.txt to the new file
-    with open('chatbot1.txt', 'r') as f_src, open(conversation_filename, 'w') as f_dest:
-        f_dest.write(f_src.read())
+    # Copy the chat history
+    try:
+        with open(chatbot_path, 'r') as f_src, open(conversation_path, 'w') as f_dst:
+            f_dst.write(f_src.read())
+    except IOError as e:
+        return f'Error saving conversation: {e}', 500
 
-    # Clear the chat by writing only the first line back to chatbot1.txt
-    with open('chatbot1.txt', 'r') as f:
-        first_line = f.readline()
-
-    with open('chatbot1.txt', 'w') as f:
-        f.write(first_line)
+    # Clear the chat history
+    try:
+        with open(chatbot_path, 'r') as f:
+            first_line = f.readline()
+        with open(chatbot_path, 'w') as f:
+            f.write(first_line)
+    except IOError as e:
+        return f'Error clearing chat: {e}', 500
 
     return 'Chat cleared successfully!'
 
